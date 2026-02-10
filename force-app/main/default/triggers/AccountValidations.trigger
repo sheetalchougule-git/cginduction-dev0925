@@ -51,4 +51,18 @@ trigger AccountValidations on Account (before insert,before update) {
             }
         }
     }
+
+    List<Account> lstAccToUpdate = new List<Account>();
+    lstAccToUpdate = [SELECT id,Name from Account];
+
+    List<Contact> lstContacts = [SELECT Id, Name, AccountId, Account.Name 
+                                FROM Contact 
+                                WHERE AccountId IN :lstAccToUpdate];
+    system.debug('Contacts with Account Name: ' + lstContacts);
+
+    //parent to child relationship - standard relationship between Account and Contact
+     List<Account> lstAccounts = [SELECT Id, Name, (SELECT Id, Name FROM Contacts) 
+                                  FROM Account];
+     system.debug('Accounts with their related contacts: ' + lstAccounts);
+
 }
