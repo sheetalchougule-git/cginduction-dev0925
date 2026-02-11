@@ -94,28 +94,12 @@ public with sharing class AccountValidations
         //Approach 3: Create rollup summary on Opportunity object 
         //to calculate the total amount of all the closed won opportunities 
         //and if the total amount is greater than 0, then throw an error message to the user.
-        /*for(Account accRec : newAccountsList)
+        for(Account accRec : newAccountsList)
         {
             if(accRec.Active__c == 'No' && accRec.No_of_Negotiation_Opps__c > 0)
             {
                 accRec.addError('Account cannot be deactivated because it has open opportunities in "Negotiation/Review" stage.');
             }
-        }*/
-
-        //Approach 4: use the join to retrieve the accounts that are being deactivated 
-        //and have related opportunities in "Negotiation/Review" stage in one go and then add error message to those accounts.
-        List<Account> lstAccs = [SELECT Id, Name, Active__c, 
-                                (SELECT Id FROM Opportunities 
-                                WHERE IsClosed = false 
-                                AND StageName = 'Negotiation/Review') 
-                                 FROM Account 
-                                 WHERE Id IN :newAccountsList AND Active__c = 'No'];
-        for(Account accRec : lstAccs)
-        {
-            if(!accRec.Opportunities.isEmpty())
-            {
-                accRec.addError('Account cannot be deactivated because it has open opportunities in "Negotiation" or "Review" stage.');
-            }
-        } 
+        }
     }
 }
